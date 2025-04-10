@@ -10,9 +10,14 @@ class BetterPlayerPlaylistConfiguration {
   ///elements in data source list. Default is 0.
   final int initialStartIndex;
 
+  ///When playing a video in full-screen mode, should it exit full-screen mode before playing
+  ///the next video. Default is false.
+  final bool exitFullscreenWhenPlayNext;
+
   const BetterPlayerPlaylistConfiguration({
     this.nextVideoDelay = const Duration(milliseconds: 3000),
     this.loopVideos = true,
+    this.exitFullscreenWhenPlayNext = false,
     this.initialStartIndex = 0,
   });
 }
