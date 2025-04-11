@@ -7,7 +7,6 @@ import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
-import android.graphics.BitmapFactory
 import android.net.Uri
 import android.os.Build
 import android.os.Handler
@@ -22,18 +21,14 @@ import io.flutter.plugin.common.EventChannel
 import io.flutter.view.TextureRegistry.SurfaceTextureEntry
 import io.flutter.plugin.common.MethodChannel
 import androidx.media3.ui.PlayerNotificationManager
-import androidx.work.WorkManager
-import androidx.work.WorkInfo
 import androidx.media3.ui.PlayerNotificationManager.MediaDescriptionAdapter
 import androidx.media3.ui.PlayerNotificationManager.BitmapCallback
-import androidx.work.OneTimeWorkRequest
 import android.util.Log
 import android.view.Surface
 import androidx.annotation.RequiresApi
 import androidx.lifecycle.Observer
 import androidx.media3.extractor.DefaultExtractorsFactory
 import io.flutter.plugin.common.EventChannel.EventSink
-import androidx.work.Data
 import androidx.media3.*
 import androidx.media3.common.AudioAttributes
 import androidx.media3.common.C
@@ -93,11 +88,8 @@ internal class BetterPlayer(
     private var refreshHandler: Handler? = null
     private var refreshRunnable: Runnable? = null
     private var exoPlayerEventListener: Player.Listener? = null
-    private var bitmap: Bitmap? = null
     private var mediaSession: MediaSessionCompat? = null
     private var drmSessionManager: DrmSessionManager? = null
-    private val workManager: WorkManager
-    private val workerObserverMap: HashMap<UUID, Observer<WorkInfo?>>
     private val customDefaultLoadControl: CustomDefaultLoadControl =
         customDefaultLoadControl ?: CustomDefaultLoadControl()
     private var lastSendBufferedPosition = 0L
@@ -115,8 +107,6 @@ internal class BetterPlayer(
             .setTrackSelector(trackSelector)
             .setLoadControl(loadControl)
             .build()
-        workManager = WorkManager.getInstance(context)
-        workerObserverMap = HashMap()
         setupVideoPlayer(eventChannel, textureEntry, result)
     }
 
@@ -246,53 +236,6 @@ internal class BetterPlayer(
                 player: Player,
                 callback: BitmapCallback
             ): Bitmap? {
-                if (imageUrl == null) {
-                    return null
-                }
-                if (bitmap != null) {
-                    return bitmap
-                }
-                val imageWorkRequest = OneTimeWorkRequest.Builder(ImageWorker::class.java)
-                    .addTag(imageUrl)
-                    .setInputData(
-                        Data.Builder()
-                            .putString(BetterPlayerPlugin.URL_PARAMETER, imageUrl)
-                            .build()
-                    )
-                    .build()
-                workManager.enqueue(imageWorkRequest)
-                val workInfoObserver = Observer { workInfo: WorkInfo? ->
-                    try {
-                        if (workInfo != null) {
-                            val state = workInfo.state
-                            if (state == WorkInfo.State.SUCCEEDED) {
-                                val outputData = workInfo.outputData
-                                val filePath =
-                                    outputData.getString(BetterPlayerPlugin.FILE_PATH_PARAMETER)
-                                //Bitmap here is already processed and it's very small, so it won't
-                                //break anything.
-                                bitmap = BitmapFactory.decodeFile(filePath)
-                                bitmap?.let { bitmap ->
-                                    callback.onBitmap(bitmap)
-                                }
-                            }
-                            if (state == WorkInfo.State.SUCCEEDED || state == WorkInfo.State.CANCELLED || state == WorkInfo.State.FAILED) {
-                                val uuid = imageWorkRequest.id
-                                val observer = workerObserverMap.remove(uuid)
-                                if (observer != null) {
-                                    workManager.getWorkInfoByIdLiveData(uuid)
-                                        .removeObserver(observer)
-                                }
-                            }
-                        }
-                    } catch (exception: Exception) {
-                        Log.e(TAG, "Image select error: $exception")
-                    }
-                }
-                val workerUuid = imageWorkRequest.id
-                workManager.getWorkInfoByIdLiveData(workerUuid)
-                    .observeForever(workInfoObserver)
-                workerObserverMap[workerUuid] = workInfoObserver
                 return null
             }
         }
@@ -376,7 +319,6 @@ internal class BetterPlayer(
         if (playerNotificationManager != null) {
             playerNotificationManager?.setPlayer(null)
         }
-        bitmap = null
     }
 
     private fun buildMediaSource(
@@ -817,36 +759,13 @@ internal class BetterPlayer(
             maxCacheSize: Long, maxCacheFileSize: Long, headers: Map<String, String?>,
             cacheKey: String?, result: MethodChannel.Result
         ) {
-            val dataBuilder = Data.Builder()
-                .putString(BetterPlayerPlugin.URL_PARAMETER, dataSource)
-                .putLong(BetterPlayerPlugin.PRE_CACHE_SIZE_PARAMETER, preCacheSize)
-                .putLong(BetterPlayerPlugin.MAX_CACHE_SIZE_PARAMETER, maxCacheSize)
-                .putLong(BetterPlayerPlugin.MAX_CACHE_FILE_SIZE_PARAMETER, maxCacheFileSize)
-            if (cacheKey != null) {
-                dataBuilder.putString(BetterPlayerPlugin.CACHE_KEY_PARAMETER, cacheKey)
-            }
-            for (headerKey in headers.keys) {
-                dataBuilder.putString(
-                    BetterPlayerPlugin.HEADER_PARAMETER + headerKey,
-                    headers[headerKey]
-                )
-            }
-            if (dataSource != null && context != null) {
-                val cacheWorkRequest = OneTimeWorkRequest.Builder(CacheWorker::class.java)
-                    .addTag(dataSource)
-                    .setInputData(dataBuilder.build()).build()
-                WorkManager.getInstance(context).enqueue(cacheWorkRequest)
-            }
-            result.success(null)
+
         }
 
         //Stop pre cache of video with given url. If there's no work manager job for given url, then
         //it will be ignored.
         fun stopPreCache(context: Context?, url: String?, result: MethodChannel.Result) {
-            if (url != null && context != null) {
-                WorkManager.getInstance(context).cancelAllWorkByTag(url)
-            }
-            result.success(null)
+
         }
     }
 
