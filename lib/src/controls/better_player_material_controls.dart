@@ -205,6 +205,7 @@ class _BetterPlayerMaterialControlsState
                     else
                       const SizedBox(),
                     _buildMoreButton(),
+                    SizedBox(width: betterPlayerController!.isFullScreen? 35 : 10,)
                   ],
                 ),
               ),
@@ -290,6 +291,8 @@ class _BetterPlayerMaterialControlsState
               flex: 75,
               child: Row(
                 children: [
+                  if(betterPlayerController!.isFullScreen)
+                    SizedBox(width: 25,),
                   if (_controlsConfiguration.enablePlayPause)
                     _buildPlayPause(_controller!)
                   else
@@ -309,6 +312,8 @@ class _BetterPlayerMaterialControlsState
                     _buildExpandButton()
                   else
                     const SizedBox(),
+                  if(betterPlayerController!.isFullScreen)
+                    SizedBox(width: 25,),
                 ],
               ),
             ),
@@ -699,7 +704,7 @@ class _BetterPlayerMaterialControlsState
       flex: 40,
       child: Container(
         alignment: Alignment.bottomCenter,
-        padding: const EdgeInsets.symmetric(horizontal: 12),
+        padding: EdgeInsets.symmetric(horizontal: betterPlayerController!.isFullScreen ? 50 : 22),
         child: BetterPlayerMaterialVideoProgressBar(
           _controller,
           _betterPlayerController,
