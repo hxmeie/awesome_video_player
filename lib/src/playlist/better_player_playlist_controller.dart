@@ -80,7 +80,7 @@ class BetterPlayerPlaylistController {
     }
     _changingToNextVideo = true;
     setupDataSource(nextDataSourceId);
-
+    _betterPlayerController!.setControlsVisibility(false);
     _changingToNextVideo = false;
   }
 
