@@ -136,6 +136,16 @@ class _BetterPlayerState extends State<BetterPlayer>
       case BetterPlayerControllerEvent.hideFullscreen:
         onFullScreenChanged();
         break;
+      case BetterPlayerControllerEvent.turnOnVideoMirror:
+        widget.controller.postEvent(BetterPlayerEvent(
+            BetterPlayerEventType.turnOnVideoMirror
+        ));
+        break;
+      case BetterPlayerControllerEvent.turnOffVideoMirror:
+        widget.controller.postEvent(BetterPlayerEvent(
+            BetterPlayerEventType.turnOffVideoMirror
+        ));
+        break;
       default:
         setState(() {});
         break;
