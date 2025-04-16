@@ -48,11 +48,13 @@ class BetterPlayerPlaylistController {
     _currentDataSourceIndex = initialStartIndex;
     setupDataSource(_currentDataSourceIndex);
     _betterPlayerController!.addEventsListener(_handleEvent);
-    _nextVideoTimeStreamSubscription = _betterPlayerController!.nextVideoTimeStream.listen((time) {
-      if (time != null && time == 0) {
-        _onVideoChange();
-      }
-    });
+    if (betterPlayerPlaylistConfiguration.enableAutoPlayNext) {
+      _nextVideoTimeStreamSubscription = _betterPlayerController!.nextVideoTimeStream.listen((time) {
+        if (time != null && time == 0) {
+          _onVideoChange();
+        }
+      });
+    }
   }
 
   /// Setup new data source list. Pauses currently played video and init new data
@@ -88,7 +90,7 @@ class BetterPlayerPlaylistController {
   ///startup of next video timer.
   void _handleEvent(BetterPlayerEvent betterPlayerEvent) {
     if (betterPlayerEvent.betterPlayerEventType == BetterPlayerEventType.finished) {
-      if (_getNextDataSourceIndex() != -1) {
+      if (_getNextDataSourceIndex() != -1 && betterPlayerPlaylistConfiguration.enableAutoPlayNext) {
         _betterPlayerController!.startNextVideoTimer();
       }
     }
