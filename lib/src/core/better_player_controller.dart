@@ -63,6 +63,10 @@ class BetterPlayerController {
   ///Flag used to store full screen mode state.
   bool get isFullScreen => _isFullScreen;
 
+  bool _isVideoMirror = false;
+
+  bool get isVideoMirror => _isVideoMirror;
+
   ///Time when last progress event was sent
   int _lastPositionSelection = 0;
 
@@ -550,10 +554,12 @@ class BetterPlayerController {
         .listen(_handleVideoEvent);
 
     final fullScreenByDefault = betterPlayerConfiguration.fullScreenByDefault;
+    final turnOnMirrorByDefault = betterPlayerConfiguration.turnOnMirrorByDefault;
     if (betterPlayerConfiguration.autoPlay) {
       if (fullScreenByDefault && !isFullScreen) {
         enterFullScreen();
       }
+      _isVideoMirror = turnOnMirrorByDefault;
       if (_isAutomaticPlayPauseHandled()) {
         if (_appLifecycleState == AppLifecycleState.resumed &&
             _isPlayerVisible) {
@@ -603,6 +609,25 @@ class BetterPlayerController {
       _postControllerEvent(BetterPlayerControllerEvent.openFullscreen);
     } else {
       _postControllerEvent(BetterPlayerControllerEvent.hideFullscreen);
+    }
+  }
+
+  void turnOnVideoMirror(){
+    _isVideoMirror = true;
+    _postControllerEvent(BetterPlayerControllerEvent.turnOnVideoMirror);
+  }
+
+  void turnOffVideoMirror(){
+    _isVideoMirror = false;
+    _postControllerEvent(BetterPlayerControllerEvent.turnOffVideoMirror);
+  }
+
+  void toggleVideoMirror(){
+    _isVideoMirror = !_isVideoMirror;
+    if (_isVideoMirror) {
+      _postControllerEvent(BetterPlayerControllerEvent.turnOnVideoMirror);
+    } else {
+      _postControllerEvent(BetterPlayerControllerEvent.turnOffVideoMirror);
     }
   }
 

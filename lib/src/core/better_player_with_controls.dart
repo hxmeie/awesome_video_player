@@ -232,6 +232,8 @@ class _BetterPlayerVideoFitWidgetState
 
   bool _started = false;
 
+  bool _isMirror = false;
+
   StreamSubscription? _controllerEventSubscription;
 
   @override
@@ -243,7 +245,7 @@ class _BetterPlayerVideoFitWidgetState
     } else {
       _started = widget.betterPlayerController.hasCurrentDataSourceStarted;
     }
-
+    _isMirror = widget.betterPlayerController.betterPlayerConfiguration.turnOnMirrorByDefault;
     _initialize();
   }
 
@@ -292,7 +294,17 @@ class _BetterPlayerVideoFitWidgetState
           _started = false;
         });
       }
-    });
+      if (event == BetterPlayerControllerEvent.turnOnVideoMirror) {
+        setState(() {
+          _isMirror = true;
+        });
+      }
+      if (event == BetterPlayerControllerEvent.turnOffVideoMirror) {
+        setState(() {
+          _isMirror = false;
+        });
+      }
+        });
   }
 
   @override
@@ -308,7 +320,10 @@ class _BetterPlayerVideoFitWidgetState
               child: SizedBox(
                 width: controller!.value.size?.width ?? 0,
                 height: controller!.value.size?.height ?? 0,
-                child: VideoPlayer(controller),
+                child: Transform.scale(
+                  scaleX: _isMirror? -1 : 1,
+                  child: VideoPlayer(controller),
+                ),
               ),
             ),
           ),

@@ -116,6 +116,9 @@ class BetterPlayerControlsConfiguration {
   ///Flag used to show/hide audio tracks
   final bool enableAudioTracks;
 
+  ///Flag used to enable/disable video mirror.Default is true
+  final bool enableVideoMirror;
+
   ///Custom items of overflow menu
   final List<BetterPlayerOverflowMenuItem> overflowMenuCustomItems;
 
@@ -136,6 +139,9 @@ class BetterPlayerControlsConfiguration {
 
   ///Icon of the audios menu item from overflow menu
   final IconData audioTracksIcon;
+
+  ///Icon of the video mirror menu item from overflow menu
+  final IconData videoMirrorIcon;
 
   ///Color of overflow menu icons
   final Color overflowMenuIconsColor;
@@ -181,6 +187,7 @@ class BetterPlayerControlsConfiguration {
     this.enablePlayPause = true,
     this.enableSkips = true,
     this.enableAudioTracks = true,
+    this.enableVideoMirror = true,
     this.progressBarPlayedColor = Colors.white,
     this.progressBarHandleColor = Colors.white,
     this.progressBarBufferedColor = Colors.white70,
@@ -205,6 +212,7 @@ class BetterPlayerControlsConfiguration {
     this.qualitiesIcon = Icons.hd_outlined,
     this.subtitlesIcon = Icons.closed_caption_outlined,
     this.audioTracksIcon = Icons.audiotrack_outlined,
+    this.videoMirrorIcon = Icons.change_circle_outlined,
     this.overflowMenuIconsColor = Colors.black,
     this.forwardSkipTimeInMilliseconds = 10000,
     this.backwardSkipTimeInMilliseconds = 10000,
