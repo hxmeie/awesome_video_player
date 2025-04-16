@@ -12,6 +12,12 @@ enum BetterPlayerControllerEvent {
   ///New data source has been set.
   setupDataSource,
 
+  ///Turn on the mirror
+  turnOnVideoMirror,
+
+  ///Turn off the mirror
+  turnOffVideoMirror,
+
   //Video has started.
   play
 }

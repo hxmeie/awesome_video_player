@@ -44,6 +44,9 @@ class BetterPlayerConfiguration {
   /// Defines if the player will start in fullscreen when play is pressed
   final bool fullScreenByDefault;
 
+  /// Defines if the player will start in mirror or not
+  final bool turnOnMirrorByDefault;
+
   /// Defines if the player will sleep in fullscreen or not
   final bool allowedScreenSleep;
 
@@ -124,6 +127,7 @@ class BetterPlayerConfiguration {
     this.startAt,
     this.looping = false,
     this.fullScreenByDefault = false,
+    this.turnOnMirrorByDefault = false,
     this.placeholder,
     this.showPlaceholderUntilPlay = false,
     this.placeholderOnTop = true,
@@ -164,6 +168,7 @@ class BetterPlayerConfiguration {
     Duration? startAt,
     bool? looping,
     bool? fullScreenByDefault,
+    bool? turnOnMirrorByDefault,
     Widget? placeholder,
     bool? showPlaceholderUntilPlay,
     bool? placeholderOnTop,
@@ -195,6 +200,7 @@ class BetterPlayerConfiguration {
       startAt: startAt ?? this.startAt,
       looping: looping ?? this.looping,
       fullScreenByDefault: fullScreenByDefault ?? this.fullScreenByDefault,
+      turnOnMirrorByDefault: turnOnMirrorByDefault ?? this.turnOnMirrorByDefault,
       placeholder: placeholder ?? this.placeholder,
       showPlaceholderUntilPlay:
           showPlaceholderUntilPlay ?? this.showPlaceholderUntilPlay,
