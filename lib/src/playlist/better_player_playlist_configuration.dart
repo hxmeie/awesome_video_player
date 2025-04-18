@@ -14,9 +14,13 @@ class BetterPlayerPlaylistConfiguration {
   ///the next video. Default is false.
   final bool exitFullscreenWhenPlayNext;
 
+  ///Whether to automatically play the next video. Default is true.
+  final bool enableAutoPlayNext;
+
   const BetterPlayerPlaylistConfiguration({
     this.nextVideoDelay = const Duration(milliseconds: 3000),
     this.loopVideos = true,
+    this.enableAutoPlayNext = true,
     this.exitFullscreenWhenPlayNext = false,
     this.initialStartIndex = 0,
   });

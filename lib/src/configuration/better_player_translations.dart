@@ -61,7 +61,7 @@ class BetterPlayerTranslations {
         generalClose: "关",
         playlistLoadingNextVideo: "正在加载下一个视频",
         controlsLive: "直播",
-        controlsNextVideoIn: "下一个视频",
+        controlsNextVideoIn: "播放下一个视频",
         overflowMenuPlaybackSpeed: "播放速度",
         overflowMenuSubtitles: "字幕",
         overflowMenuQuality: "视频质量",

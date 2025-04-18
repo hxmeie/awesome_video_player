@@ -31,6 +31,7 @@ class _BetterPlayerWithControlsState extends State<BetterPlayerWithControls> {
       StreamController();
 
   bool _initialized = false;
+  bool _showPlaceHolder = true;
 
   StreamSubscription? _controllerEventSubscription;
 
@@ -40,6 +41,9 @@ class _BetterPlayerWithControlsState extends State<BetterPlayerWithControls> {
     _controllerEventSubscription =
         widget.controller!.controllerEventStream.listen(_onControllerChanged);
     super.initState();
+    if (widget.controller?.isPlaying() == true) {
+      _showPlaceHolder = false;
+    }
   }
 
   @override
@@ -63,6 +67,12 @@ class _BetterPlayerWithControlsState extends State<BetterPlayerWithControls> {
     setState(() {
       if (!_initialized) {
         _initialized = true;
+      }
+      if (event == BetterPlayerControllerEvent.play) {
+        _showPlaceHolder = false;
+      }
+      if (event == BetterPlayerControllerEvent.setupDataSource) {
+        _showPlaceHolder = true;
       }
     });
   }
@@ -124,12 +134,13 @@ class _BetterPlayerWithControlsState extends State<BetterPlayerWithControls> {
 
     final bool placeholderOnTop =
         betterPlayerController.betterPlayerConfiguration.placeholderOnTop;
+    bool isMirror = betterPlayerController.isVideoMirror;
     // ignore: avoid_unnecessary_containers
     return Container(
       child: Stack(
         fit: StackFit.passthrough,
         children: <Widget>[
-          if (placeholderOnTop) _buildPlaceholder(betterPlayerController),
+          if (placeholderOnTop && _showPlaceHolder) _buildPlaceholder(betterPlayerController, isMirror),
           Transform.rotate(
             angle: rotation * pi / 180,
             child: _BetterPlayerVideoFitWidget(
@@ -145,17 +156,21 @@ class _BetterPlayerWithControlsState extends State<BetterPlayerWithControls> {
             subtitles: betterPlayerController.subtitlesLines,
             playerVisibilityStream: playerVisibilityStreamController.stream,
           ),
-          if (!placeholderOnTop) _buildPlaceholder(betterPlayerController),
+          if (!placeholderOnTop && betterPlayerController.isPlaceholderShow)
+            _buildPlaceholder(betterPlayerController, isMirror),
           _buildControls(context, betterPlayerController),
         ],
       ),
     );
   }
 
-  Widget _buildPlaceholder(BetterPlayerController betterPlayerController) {
-    return betterPlayerController.betterPlayerDataSource!.placeholder ??
-        betterPlayerController.betterPlayerConfiguration.placeholder ??
-        Container();
+  Widget _buildPlaceholder(BetterPlayerController betterPlayerController,bool isMirror) {
+    return Transform.scale(
+      scaleX: isMirror ? -1 : 1,
+      child: betterPlayerController.betterPlayerDataSource!.placeholder ??
+          betterPlayerController.betterPlayerConfiguration.placeholder ??
+          Container(),
+    );
   }
 
   Widget _buildControls(
@@ -245,7 +260,7 @@ class _BetterPlayerVideoFitWidgetState
     } else {
       _started = widget.betterPlayerController.hasCurrentDataSourceStarted;
     }
-    _isMirror = widget.betterPlayerController.betterPlayerConfiguration.turnOnMirrorByDefault;
+    _isMirror = widget.betterPlayerController.isVideoMirror;
     _initialize();
   }
 
