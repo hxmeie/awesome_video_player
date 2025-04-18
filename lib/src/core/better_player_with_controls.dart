@@ -32,7 +32,6 @@ class _BetterPlayerWithControlsState extends State<BetterPlayerWithControls> {
 
   bool _initialized = false;
   bool _showPlaceHolder = true;
-  bool _isInitPlaceHolder = true;
 
   StreamSubscription? _controllerEventSubscription;
 
@@ -42,6 +41,9 @@ class _BetterPlayerWithControlsState extends State<BetterPlayerWithControls> {
     _controllerEventSubscription =
         widget.controller!.controllerEventStream.listen(_onControllerChanged);
     super.initState();
+    if (widget.controller?.isPlaying() == true) {
+      _showPlaceHolder = false;
+    }
   }
 
   @override
@@ -71,7 +73,6 @@ class _BetterPlayerWithControlsState extends State<BetterPlayerWithControls> {
       }
       if (event == BetterPlayerControllerEvent.setupDataSource) {
         _showPlaceHolder = true;
-        _isInitPlaceHolder = true;
       }
     });
   }
@@ -133,13 +134,7 @@ class _BetterPlayerWithControlsState extends State<BetterPlayerWithControls> {
 
     final bool placeholderOnTop =
         betterPlayerController.betterPlayerConfiguration.placeholderOnTop;
-    bool isMirror = false;
-    if (_isInitPlaceHolder) {
-      _isInitPlaceHolder = false;
-      isMirror = betterPlayerController.betterPlayerConfiguration.turnOnMirrorByDefault;
-    } else {
-      isMirror = betterPlayerController.isVideoMirror;
-    }
+    bool isMirror = betterPlayerController.isVideoMirror;
     // ignore: avoid_unnecessary_containers
     return Container(
       child: Stack(

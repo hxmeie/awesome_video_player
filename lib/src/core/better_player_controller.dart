@@ -227,6 +227,8 @@ class BetterPlayerController {
     this._betterPlayerControlsConfiguration =
         betterPlayerConfiguration.controlsConfiguration;
     _eventListeners.add(eventListener);
+    final turnOnMirrorByDefault = betterPlayerConfiguration.turnOnMirrorByDefault;
+    _isVideoMirror = turnOnMirrorByDefault;
     if (betterPlayerDataSource != null) {
       setupDataSource(betterPlayerDataSource);
     }
@@ -559,8 +561,6 @@ class BetterPlayerController {
         .listen(_handleVideoEvent);
 
     final fullScreenByDefault = betterPlayerConfiguration.fullScreenByDefault;
-    final turnOnMirrorByDefault = betterPlayerConfiguration.turnOnMirrorByDefault;
-    _isVideoMirror = turnOnMirrorByDefault;
     if (betterPlayerConfiguration.autoPlay) {
       if (fullScreenByDefault && !isFullScreen) {
         enterFullScreen();
