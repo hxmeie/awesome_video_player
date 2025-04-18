@@ -146,6 +146,16 @@ class _BetterPlayerState extends State<BetterPlayer>
             BetterPlayerEventType.turnOffVideoMirror
         ));
         break;
+      case BetterPlayerControllerEvent.showPlaceHolder:
+        widget.controller.postEvent(BetterPlayerEvent(
+            BetterPlayerEventType.showPlaceholder
+        ));
+        break;
+      case BetterPlayerControllerEvent.hidePlaceHolder:
+        widget.controller.postEvent(BetterPlayerEvent(
+            BetterPlayerEventType.hidePlaceholder
+        ));
+        break;
       default:
         setState(() {});
         break;

@@ -8,6 +8,8 @@ enum BetterPlayerEventType {
   hideFullscreen,
   turnOnVideoMirror,
   turnOffVideoMirror,
+  showPlaceholder,
+  hidePlaceholder,
   setVolume,
   progress,
   finished,

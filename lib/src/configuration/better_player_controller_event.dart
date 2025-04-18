@@ -18,6 +18,10 @@ enum BetterPlayerControllerEvent {
   ///Turn off the mirror
   turnOffVideoMirror,
 
+  showPlaceHolder,
+
+  hidePlaceHolder,
+
   //Video has started.
   play
 }

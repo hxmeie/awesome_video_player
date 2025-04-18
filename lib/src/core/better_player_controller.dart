@@ -67,6 +67,11 @@ class BetterPlayerController {
 
   bool get isVideoMirror => _isVideoMirror;
 
+  ///It only works when the placeholderOnTop property is false.
+  bool _isPlaceholderShow = true;
+
+  bool get isPlaceholderShow => _isPlaceholderShow;
+
   ///Time when last progress event was sent
   int _lastPositionSelection = 0;
 
@@ -555,11 +560,11 @@ class BetterPlayerController {
 
     final fullScreenByDefault = betterPlayerConfiguration.fullScreenByDefault;
     final turnOnMirrorByDefault = betterPlayerConfiguration.turnOnMirrorByDefault;
+    _isVideoMirror = turnOnMirrorByDefault;
     if (betterPlayerConfiguration.autoPlay) {
       if (fullScreenByDefault && !isFullScreen) {
         enterFullScreen();
       }
-      _isVideoMirror = turnOnMirrorByDefault;
       if (_isAutomaticPlayPauseHandled()) {
         if (_appLifecycleState == AppLifecycleState.resumed &&
             _isPlayerVisible) {
@@ -610,6 +615,18 @@ class BetterPlayerController {
     } else {
       _postControllerEvent(BetterPlayerControllerEvent.hideFullscreen);
     }
+  }
+
+  ///It only works when the placeholderOnTop property is false.
+  void showPlaceholder(){
+    _isPlaceholderShow = true;
+    _postControllerEvent(BetterPlayerControllerEvent.showPlaceHolder);
+  }
+
+  ///It only works when the placeholderOnTop property is false.
+  void hidePlaceholder(){
+    _isPlaceholderShow = false;
+    _postControllerEvent(BetterPlayerControllerEvent.hidePlaceHolder);
   }
 
   void turnOnVideoMirror(){
